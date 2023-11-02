@@ -16,12 +16,10 @@ router.get("/:id", async (req, res) => {
   if (!user) return res.status(404).send("No user found");
   res.send(user);
 })
+
 router.post("/", async (req, res) => {
   const validatedUser = validate(req.body);
-  if (validatedUser.error) {
-    res.status(400).send(validatedUser.error.details[0].message);
-    return;
-  }
+  if (validatedUser.error) returnres.status(400).send(validatedUser.error.details[0].message);
 
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);

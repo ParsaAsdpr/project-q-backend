@@ -1,6 +1,7 @@
 const express = require("express");
-const { Question } = require("../Models/QuestionsModel");
+const { Question } = require("../Models/questionsModel");
 const validate = require("../Middleware/validateQuestion");
+const { default: mongoose } = require("mongoose");
 
 const router = express.Router();
 
@@ -22,17 +23,18 @@ router.post("/", async (req, res) => {
   if (validatedQuestion.error)
     return res.status(400).send(validatedQuestion.error.details[0].message);
 
-  if (!req.body.user_id) return res.status(400).send("User id is required");
-
-  const question = new Question({
-    user_id: req.body.user_id,
-    title: req.body.title,
-    body: req.body.body,
-    timestamp: req.body.timestamp,
-    tags: req.body.tags,
-  });
-
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.body.user_id)) {
+      return res.status(400).send("Invalid User ID");
+    }
+    const question = new Question({
+      user_id: req.body.user_id,
+      title: req.body.title,
+      body: req.body.body,
+      timestamp: req.body.timestamp,
+      tags: req.body.tags,
+    });
+
     await question.save();
 
     res.status(201).send({

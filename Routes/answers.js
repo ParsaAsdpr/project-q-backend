@@ -25,12 +25,8 @@ router.post("/", async (req, res) => {
     return res.status(400).send(validatedAnswer.error.details[0].message);
 
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.body.user_id)) {
-      return res.status(400).send("Invalid User ID");
-    }
-    if (!mongoose.Types.ObjectId.isValid(req.body.question_id)) {
-      return res.status(400).send("Invalid Question ID");
-    }
+    if (!mongoose.Types.ObjectId.isValid(req.body.user_id)) return res.status(400).send("Invalid User ID");
+    if (!mongoose.Types.ObjectId.isValid(req.body.question_id)) return res.status(400).send("Invalid Question ID");
     
     const answer = new Answer({
       user_id: req.body.user_id,

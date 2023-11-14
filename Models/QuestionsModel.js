@@ -12,7 +12,6 @@ const questionsSchema = new mongoose.Schema({
   },
   body: {
     type: String,
-    required: true,
   },
   timestamp: {
     type: Date,

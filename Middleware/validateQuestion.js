@@ -4,7 +4,7 @@ const validateQuestion = (question) => {
   const schema = Joi.object({
     user_id: Joi.string().required(),
     title: Joi.string().min(10).max(300).required(),
-    body: Joi.string().min(50).required(),
+    body: Joi.string().min(50),
     timestamp: Joi.date(),
     tags: Joi.array().items(Joi.string()).required(),
   });

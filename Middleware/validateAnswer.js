@@ -8,6 +8,7 @@ const validateAnswer = (answer) => {
         timestamp: Joi.date(),
         upvotes: Joi.number(),
         downvotes: Joi.number(),
+        shareCount: Joi.number()
     });
 
     return schema.validate(answer);

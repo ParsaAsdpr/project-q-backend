@@ -2,6 +2,7 @@ const express = require("express");
 const { Question } = require("../Models/questionsModel");
 const validate = require("../Middleware/validateQuestion");
 const { default: mongoose } = require("mongoose");
+const auth = require("../Middleware/auth");
 
 const router = express.Router();
 
@@ -12,12 +13,17 @@ router.get("/", async (req, res) => {
   res.send(questions);
 });
 router.get("/:id", async (req, res) => {
-  const question = Question.findById(req.params.id);
-  if (!question) return res.status(404).send("Question not found");
-  res.send(question);
+  try {
+    const question = await Question.findById(req.params.id);
+    if (!question) return res.status(404).send("Question not found");
+    res.send(question);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const validatedQuestion = validate(req.body);
 
   if (validatedQuestion.error)

@@ -4,6 +4,7 @@ const validate = require("../Middleware/validateAnswer");
 const { Question } = require("../Models/questionsModel");
 const { User } = require("../Models/usersModel");
 const { default: mongoose } = require("mongoose");
+const auth = require("../Middleware/auth");
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ router.get("/:id", async (req, res) => {
   res.send(answer);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const validatedAnswer = validate(req.body);
   if (validatedAnswer.error)
     return res.status(400).send(validatedAnswer.error.details[0].message);

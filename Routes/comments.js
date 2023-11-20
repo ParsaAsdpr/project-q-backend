@@ -2,6 +2,7 @@ const express = require('express');
 const validate = require('../Middleware/validateComment');
 const { Comment } = require('../Models/commentsModel');
 const { default: mongoose } = require('mongoose');
+const auth = require('../Middleware/auth');
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.get('/', async (req, res) => {
     if (comments.length < 1) return res.status(404).send('No comments found');
     res.send(comments);
 })
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const validatedComment = validate(req.body);
     if (validatedComment.error) return res.status(400).send(validatedComment.error.details[0].message);
 

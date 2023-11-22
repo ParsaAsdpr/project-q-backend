@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     name: { type: String, default: null },
     bio: { type: String, default: null },
     profile_picture: { type: String, default: "/static/images/default.png" },
-    location: { type: String, default: null },
+    job: { type: String, default: null },
     website: { type: String, default: null },
     social_links: [
       {
@@ -29,7 +29,10 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign({ _id: this._id, isAdmin: this.isAdmin }, "pvKey");
+  const token = jwt.sign(
+    { _id: this._id, profile: this.profile, email: this.email, username: this.username, isAdmin: this.isAdmin },
+    "pvKey"
+  );
   return token;
 };
 

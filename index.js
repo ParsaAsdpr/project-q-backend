@@ -16,8 +16,13 @@ mongoose.connect('mongodb://localhost/project-q').then(() => {
     console.log(err);
 });
 
+const corsOptions = {
+    exposedHeaders: 'Authorization',
+  };
+
+app.use("/static", express.static('static'));
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use('/api/users', users);
 app.use('/api/questions', questions);
 app.use('/api/answers', answers);

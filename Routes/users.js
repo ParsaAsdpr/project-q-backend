@@ -4,6 +4,7 @@ const { User } = require("../Models/usersModel");
 const bcrypt = require("bcrypt");
 const auth = require("../Middleware/auth");
 const isAdmin = require("../Middleware/isAdmin");
+const _ = require('lodash');
 
 const router = express.Router();
 
@@ -13,47 +14,31 @@ router.get("/", [auth, isAdmin], async (req, res) => {
   if (users.length < 1) return res.status(404).send("No users found");
   res.send(users);
 });
-router.get("/:id", [auth, isAdmin], async (req, res) => {
+router.get("/:id", async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).send("No user found");
-  res.send(user);
-})
+  res.send(_.pick(user, ['_id', 'username', 'profile' ]));
+});
 
 router.post("/", async (req, res) => {
-  const validatedUser = validate(req.body);
-  if (validatedUser.error) return res.status(400).send(validatedUser.error.details[0].message);
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
 
-  const saltRounds = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+  let user = await User.findOne({ email: req.body.email });
+  if (user) return res.status(400).send("User already registered.");
 
-  const user = new User({
-    username: req.body.username,
-    email: req.body.email,
-    password: hashedPassword,
-    profile: req.body.profile,
-    accountCreated: req.body.accountCreated || new Date(),
-  });
-  
-  try {
-    await user.save();
-    
-    const token = user.generateAuthToken();
+  user = new User(
+    _.pick(req.body, ["email", "username", "profile", "password"])
+  );
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(user.password, salt);
+  await user.save();
 
-    res.header('x-auth-token', token).status(200).send({
-      message: "User created successfully",
-      user: {
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        profile: user.profile,
-        accountCreated: user.accountCreated,
-      },
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("An error occurred while creating the user.");
-    return;
-  }
+  const token = user.generateAuthToken();
+  res
+    .header("x-auth-token", token)
+    .header("access-control-expose-headers", "x-auth-token")
+    .send(_.pick(user, ["_id", "profile", "username", "email"]));
 });
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const express = require("express");
 const { Answer } = require("../Models/answersModel");
-const validate = require("../Middleware/validateAnswer");
+const validate = require("../validations/validateAnswer");
 const { Question } = require("../Models/questionsModel");
 const { User } = require("../Models/usersModel");
 const { default: mongoose } = require("mongoose");

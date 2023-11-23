@@ -1,10 +1,13 @@
 const express = require("express");
-const validate = require("../validations/validateUser");
+const {
+  validateUser,
+  validateEditUser,
+} = require("../validations/validateUser");
 const { User } = require("../Models/usersModel");
 const bcrypt = require("bcrypt");
 const auth = require("../Middleware/auth");
 const isAdmin = require("../Middleware/isAdmin");
-const _ = require('lodash');
+const _ = require("lodash");
 const checkUser = require("../Middleware/checkUser");
 
 const router = express.Router();
@@ -18,20 +21,25 @@ router.get("/", [auth, isAdmin], async (req, res) => {
 router.get("/:id", async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).send("No user found");
-  res.send(_.pick(user, ['_id', 'username', 'profile' ]));
+  res.send(_.pick(user, ["_id", "username", "profile"]));
 });
 
-
 router.post("/", async (req, res) => {
-  const { error } = validate(req.body);
+  const { error } = validateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  let user = await User.findOne({ email: req.body.email });
+  let user = await User.findOne({
+    $or: [{ email: req.body.email.toLowerCase() }, { username: req.body.username.toLowerCase() }],
+  });
   if (user) return res.status(400).send("User already registered.");
 
-  user = new User(
-    _.pick(req.body, ["email", "username", "profile", "password"])
-  );
+  user = new User({
+    email: req.body.email.toLowerCase(),
+    username: req.body.username.toLowerCase(),
+    profile: req.body.profile,
+    password: req.body.password
+  });
+  
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(user.password, salt);
   await user.save();
@@ -43,34 +51,45 @@ router.post("/", async (req, res) => {
     .send(_.pick(user, ["_id", "profile", "username", "email"]));
 });
 
-
-router.put('/:id', [auth, checkUser], async (req, res) => {
+router.put("/:id", [auth, checkUser], async (req, res) => {
   try {
-    const { error } = validate(req.body);
+    const { error } = validateEditUser(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).send('User not found');
+    if (!user) return res.status(404).send("User not found");
 
-    user.email = req.body.email;
-    user.username = req.body.username;
-    user.profile = req.body.profile;
-    user.password = req.body.password;
+    user.email = req.body.email.toLowerCase() || user.email.toLowerCase();
+    user.username =
+      req.body.username.toLowerCase() || user.username.toLowerCase();
+    user.profile =
+      {
+        name: req.body.profile.name || user.profile.name,
+        bio: req.body.profile.bio || user.profile.bio,
+        profile_picture:
+          req.body.profile.profile_picture || user.profile.profile_picture,
+        job: req.body.profile.job || user.profile.job,
+        website: req.body.profile.website || user.profile.website,
+        social_links:
+          req.body.profile.social_links || user.profile.social_links,
+      } || user.profile;
+    user.password = req.body.password || user.password;
 
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
-
+    if (req.body.password && req.body.password !== user.password) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(req.body.password, salt);
+    }
     await user.save();
 
     const token = user.generateAuthToken();
 
     res
-      .header('x-auth-token', token)
-      .header('access-control-expose-headers', 'x-auth-token')
-      .send(_.pick(user, ['_id', 'profile', 'username', 'email']));
+      .header("x-auth-token", token)
+      .header("access-control-expose-headers", "x-auth-token")
+      .send(_.pick(user, ["_id", "profile", "username", "email"]));
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send("Internal Server Error");
   }
 });
 

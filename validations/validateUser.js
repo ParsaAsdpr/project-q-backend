@@ -9,7 +9,7 @@ const validateUser = (user) => {
       name: Joi.string().min(3).max(80).required(),
       bio: Joi.string().min(5).max(300),
       profile_picture: Joi.string().uri(),
-      location: Joi.string(),
+      job: Joi.string(),
       website: Joi.string().uri(),
       social_links: Joi.array().items(
         Joi.object({ platform: Joi.string(), url: Joi.string().uri() })
@@ -20,4 +20,25 @@ const validateUser = (user) => {
   return schema.validate(user);
 };
 
-module.exports = validateUser;
+const validateEditUser = (user) => {
+  const schema = Joi.object({
+    username: Joi.string().min(3).max(40),
+    email: Joi.string().email(),
+    profile: Joi.object({
+      name: Joi.string().min(3).max(80),
+      bio: Joi.string().min(5).max(300).allow(null),
+      profile_picture: Joi.string().uri().allow(null),
+      job: Joi.string().allow(null),
+      website: Joi.string().uri().allow(null),
+      social_links: Joi.array().items(
+        Joi.object({ platform: Joi.string(), url: Joi.string().uri() })
+      ),
+    }),
+  });
+  return schema.validate(user);
+};
+
+module.exports = {
+  validateUser,
+  validateEditUser
+}

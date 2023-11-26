@@ -2,13 +2,13 @@ const express = require("express");
 const {
   validateUser,
   validateEditUser,
-} = require("../validations/validateUser");
+} = require("../utils/validations/validateUser");
 const { User } = require("../Models/usersModel");
 const bcrypt = require("bcrypt");
-const auth = require("../Middleware/auth");
-const isAdmin = require("../Middleware/isAdmin");
+const auth = require("../utils/Middleware/auth");
+const isAdmin = require("../utils/Middleware/isAdmin");
 const _ = require("lodash");
-const checkUser = require("../Middleware/checkUser");
+const checkUser = require("../utils/Middleware/checkUser");
 
 const router = express.Router();
 
@@ -29,13 +29,13 @@ router.post("/", async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   let user = await User.findOne({
-    $or: [{ email: req.body.email.toLowerCase() }, { username: req.body.username.toLowerCase() }],
+    $or: [{ email: req.body.email?.toLowerCase() }, { username: req.body.username?.toLowerCase() }],
   });
   if (user) return res.status(400).send("User already registered.");
 
   user = new User({
-    email: req.body.email.toLowerCase(),
-    username: req.body.username.toLowerCase(),
+    email: req.body.email?.toLowerCase(),
+    username: req.body.username?.toLowerCase(),
     profile: req.body.profile,
     password: req.body.password
   });
@@ -59,9 +59,9 @@ router.put("/:id", [auth, checkUser], async (req, res) => {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).send("User not found");
 
-    user.email = req.body.email.toLowerCase() || user.email.toLowerCase();
+    user.email = req.body.email?.toLowerCase() || user.email.toLowerCase();
     user.username =
-      req.body.username.toLowerCase() || user.username.toLowerCase();
+      req.body.username?.toLowerCase() || user.username.toLowerCase();
     user.profile =
       {
         name: req.body.profile.name || user.profile.name,

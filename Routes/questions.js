@@ -1,8 +1,8 @@
 const express = require("express");
 const { Question } = require("../Models/questionsModel");
-const validate = require("../validations/validateQuestion");
+const validate = require("../utils/validations/validateQuestion");
 const { default: mongoose } = require("mongoose");
-const auth = require("../Middleware/auth");
+const auth = require("../utils/Middleware/auth");
 
 const router = express.Router();
 

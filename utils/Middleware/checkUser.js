@@ -1,4 +1,4 @@
-const { User } = require("../Models/usersModel");
+const { User } = require("../../Models/usersModel");
 const jwt = require("jsonwebtoken");
 
 module.exports = async (req, res, next) => {
@@ -13,6 +13,7 @@ module.exports = async (req, res, next) => {
     }
 
     if (user._id.toString() !== req.params.id) {
+      // console.log(user._id, req.params.id);
       return res.status(403).send("Access denied");
     }
 

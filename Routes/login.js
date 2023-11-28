@@ -1,6 +1,6 @@
 const express = require("express");
 const { User } = require("../Models/usersModel");
-const validate = require("../utils/validations/validateLogin");
+const validate = require("../utils/Middleware/validations/validateLogin");
 const jwt = require("jsonwebtoken");
 const { default: mongoose } = require("mongoose");
 const bcrypt = require("bcrypt");

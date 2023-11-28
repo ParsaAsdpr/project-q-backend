@@ -2,13 +2,13 @@ const express = require("express");
 const {
   validateUser,
   validateEditUser,
-} = require("../utils/validations/validateUser");
+} = require("../utils/Middleware/validations/validateUser");
 const { User } = require("../Models/usersModel");
 const bcrypt = require("bcrypt");
 const auth = require("../utils/Middleware/auth");
 const isAdmin = require("../utils/Middleware/isAdmin");
 const _ = require("lodash");
-const checkUser = require("../utils/Middleware/checkUser");
+const checkUserParams = require("../utils/Middleware/checkUserParams");
 
 const router = express.Router();
 
@@ -51,7 +51,7 @@ router.post("/", async (req, res) => {
     .send(_.pick(user, ["_id", "profile", "username", "email"]));
 });
 
-router.put("/:id", [auth, checkUser], async (req, res) => {
+router.put("/:id", [auth, checkUserParams], async (req, res) => {
   try {
     const { error } = validateEditUser(req.body);
     if (error) return res.status(400).send(error.details[0].message);

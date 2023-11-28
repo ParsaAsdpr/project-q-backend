@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const validateAnswer = (answer) => {
+const validateAnswer = (req, res, next) => {
     const schema = Joi.object({
         user_id: Joi.string().required(),
         question_id: Joi.string().required(),
@@ -8,10 +8,17 @@ const validateAnswer = (answer) => {
         timestamp: Joi.date(),
         upvotes: Joi.number(),
         downvotes: Joi.number(),
-        shareCount: Joi.number()
+        shareCount: Joi.number(),
+        views: Joi.number(),
     });
 
-    return schema.validate(answer);
+    const { error } = schema.validate(req.body);
+
+    if (error) {
+        return res.status(400).send(error.details[0].message);
+    }
+
+    next();
 }
 
-module.exports = validateAnswer
+module.exports = {validateAnswer};

@@ -9,11 +9,11 @@ module.exports = async (req, res, next) => {
 
     const user = await User.findById(userId);
     if (!user) {
+      console.log(userId, user);
       return res.status(404).send("User not found");
     }
 
-    if (user._id.toString() !== req.params.id) {
-      // console.log(user._id, req.params.id);
+    if (user._id.toString() !== req.body.user_id) {
       return res.status(403).send("Access denied");
     }
 

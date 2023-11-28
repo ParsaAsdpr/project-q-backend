@@ -1,8 +1,9 @@
 const express = require("express");
 const { Question } = require("../Models/questionsModel");
-const validate = require("../utils/validations/validateQuestion");
+const validate = require("../utils/Middleware/validations/validateQuestion");
 const { default: mongoose } = require("mongoose");
 const auth = require("../utils/Middleware/auth");
+const checkUserBody = require("../utils/Middleware/checkUserBody");
 
 const router = express.Router();
 
@@ -23,20 +24,15 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", auth, async (req, res) => {
+router.post("/", [auth], async (req, res) => {
   const validatedQuestion = validate(req.body);
 
   if (validatedQuestion.error)
     return res.status(400).send(validatedQuestion.error.details[0].message);
 
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.body.user_id)) {
-      return res.status(400).send("Invalid User ID");
-    }
     const question = new Question({
-      user_id: req.body.user_id,
       title: req.body.title,
-      body: req.body.body,
       timestamp: req.body.timestamp,
       tags: req.body.tags,
     });
@@ -44,14 +40,8 @@ router.post("/", auth, async (req, res) => {
     await question.save();
 
     res.status(201).send({
-      message: "User created successfully",
-      question: {
-        user_id: question.user_id,
-        title: question.title,
-        body: question.body,
-        timestamp: question.timestamp,
-        tags: question.tags,
-      },
+      message: "Question created successfully",
+      question: question,
     });
   } catch (error) {
     console.error(error);

@@ -1,5 +1,5 @@
 const express = require('express');
-const validate = require('../utils/validations/validateComment');
+const validate = require('../utils/Middleware/validations/validateComment');
 const { Comment } = require('../Models/commentsModel');
 const { default: mongoose } = require('mongoose');
 const auth = require('../utils/Middleware/auth');

@@ -1,6 +1,6 @@
 const express = require("express");
 const auth = require("../utils/Middleware/auth");
-const checkUser = require("../utils/Middleware/checkUser");
+const checkUserParams = require("../utils/Middleware/checkUserParams");
 const { User } = require("../Models/usersModel");
 const { uploadInStorage } = require("../utils/storage");
 const fs = require('fs');
@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post(
   "/:id",
-  [auth, checkUser, uploadInStorage.single("avatar")],
+  [auth, checkUserParams, uploadInStorage.single("avatar")],
   async (req, res) => {
     try {
       const user = await User.findById(req.params.id);

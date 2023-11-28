@@ -34,7 +34,11 @@ const answerSchema = new mongoose.Schema({
   shareCount: {
     type: Number,
     default: 0,
-  }
+  },
+  views: {
+    type: Number,
+    default: 0,
+  },
 });
 
 exports.Answer = mongoose.model("Answers", answerSchema);

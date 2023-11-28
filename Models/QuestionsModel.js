@@ -1,17 +1,9 @@
 const mongoose = require("mongoose");
 
 const questionsSchema = new mongoose.Schema({
-  user_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
   title: {
     type: String,
     required: true,
-  },
-  body: {
-    type: String,
   },
   timestamp: {
     type: Date,
@@ -21,6 +13,17 @@ const questionsSchema = new mongoose.Schema({
     type: Array,
     required: true,
   },
+  follower: {
+    type: Number,
+    default: 0,
+  },
+  answers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Answer",
+      default: null,
+    },
+  ],
 });
 
 exports.Question = mongoose.model("Question", questionsSchema);

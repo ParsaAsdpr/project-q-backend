@@ -14,7 +14,7 @@ router.post(
   async (req, res) => {
     try {
       const user = await User.findById(req.params.id);
-      if (!user) return res.status(404).send("User not found");
+      if (!user) return res.status(404).send("کاربری با این شناسه یافت نشد");
 
       if (user.profile.profile_picture && user.profile.profile_picture !== "/static/images/default.png") {
         const currentAvatarPath = path.join(__dirname, '..' , user.profile.profile_picture.substr(1));
@@ -51,7 +51,7 @@ router.post(
       console.log();
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: "مشکلی پیش آمده" });
     }
   }
 );

@@ -2,8 +2,8 @@ const Joi = require('joi');
 
 const validateAnswer = (req, res, next) => {
     const schema = Joi.object({
-        user_id: Joi.string().required(),
-        question_id: Joi.string().required(),
+        user: Joi.string().required(),
+        question: Joi.string().required(),
         body: Joi.string().min(50).required(),
         timestamp: Joi.date(),
         upvotes: Joi.number(),

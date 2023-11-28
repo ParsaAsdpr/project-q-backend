@@ -9,18 +9,18 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   const questions = await Question.find();
-  if (!questions) return res.status(404).send("No questions found");
-  if (questions.length < 1) return res.status(404).send("No questions found");
+  if (!questions) return res.status(404).send("سوالی پیدا نشد");
+  if (questions.length < 1) return res.status(404).send("سوالی پیدا نشد");
   res.send(questions);
 });
 router.get("/:id", async (req, res) => {
   try {
     const question = await Question.findById(req.params.id);
-    if (!question) return res.status(404).send("Question not found");
+    if (!question) return res.status(404).send("سوال مورد نظر پیدا نشد");
     res.send(question);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send("مشکلی پیش آمده است");
   }
 });
 
@@ -40,12 +40,12 @@ router.post("/", [auth], async (req, res) => {
     await question.save();
 
     res.status(201).send({
-      message: "Question created successfully",
+      message: "سوال شما با موفقیت ثبت شد",
       question: question,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send("An error occurred while creating the user.");
+    res.status(500).send("مشکلی پیش آمده است");
     return;
   }
 });

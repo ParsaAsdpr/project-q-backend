@@ -14,13 +14,13 @@ const router = express.Router();
 
 router.get("/", [auth, isAdmin], async (req, res) => {
   const users = await User.find();
-  if (!users) return res.status(404).send("No users found");
-  if (users.length < 1) return res.status(404).send("No users found");
+  if (!users) return res.status(404).send("کاربری یافت نشد");
+  if (users.length < 1) return res.status(404).send("کاربری یافت نشد");
   res.send(users);
 });
 router.get("/:id", async (req, res) => {
   const user = await User.findById(req.params.id);
-  if (!user) return res.status(404).send("No user found");
+  if (!user) return res.status(404).send("کاربری با این شناسه یافت نشد");
   res.send(_.pick(user, ["_id", "username", "profile"]));
 });
 
@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
   let user = await User.findOne({
     $or: [{ email: req.body.email?.toLowerCase() }, { username: req.body.username?.toLowerCase() }],
   });
-  if (user) return res.status(400).send("User already registered.");
+  if (user) return res.status(400).send("این ایمیل یا نام کاربری قبلا ثبت شده است");
 
   user = new User({
     email: req.body.email?.toLowerCase(),
@@ -57,7 +57,7 @@ router.put("/:id", [auth, checkUserParams], async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).send("User not found");
+    if (!user) return res.status(404).send("کاربری با این شناسه یافت نشد");
 
     user.email = req.body.email?.toLowerCase() || user.email.toLowerCase();
     user.username =

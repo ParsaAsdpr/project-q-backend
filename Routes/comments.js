@@ -8,8 +8,8 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     const comments = await Comment.find();
-    if (!comments) return res.status(404).send('No comments found');
-    if (comments.length < 1) return res.status(404).send('No comments found');
+    if (!comments) return res.status(404).send('نظری پیدا نشد');
+    if (comments.length < 1) return res.status(404).send('نظری پیدا نشد');
     res.send(comments);
 })
 router.post('/', auth, async (req, res) => {

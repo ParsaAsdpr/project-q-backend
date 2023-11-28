@@ -8,25 +8,25 @@ const {validateAnswer} = require("../utils/Middleware/validations/validateAnswer
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  const answers = await Answer.find().populate("user_id", "profile").populate("question_id", "title");
-  if (!answers) return res.status(404).send("Answers not found");
-  if (answers.length < 1) return res.status(404).send("Answers not found");
+  const answers = await Answer.find().populate("user", "username + profile").populate("question", "title");
+  if (!answers) return res.status(404).send("جوابی پیدا نشد");
+  if (answers.length < 1) return res.status(404).send("جوابی پیدا نشد");
   res.send(answers);
 });
 router.get("/:id", async (req, res) => {
-  const answer = await Answer.findById(req.params.id).populate("user_id", "profile").populate("question_id", "title");
-  if (!answer) return res.status(404).send("Answer not found");
+  const answer = await Answer.findById(req.params.id).populate("user", "username + profile").populate("question", "title");
+  if (!answer) return res.status(404).send("جواب مورد نظر پیدا نشد");
   res.send(answer);
 });
 
 router.post("/", [auth, validateAnswer, checkUserBody], async (req, res) => {
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.body.user_id)) return res.status(400).send("Invalid User ID");
-    if (!mongoose.Types.ObjectId.isValid(req.body.question_id)) return res.status(400).send("Invalid Question ID");
+    if (!mongoose.Types.ObjectId.isValid(req.body.user)) return res.status(400).send("شناسه کاربر نامعتبر است");
+    if (!mongoose.Types.ObjectId.isValid(req.body.question)) return res.status(400).send("شناسه سوال نامعتبر است");
     
     const answer = new Answer({
-      user_id: req.body.user_id,
-      question_id: req.body.question_id,
+      user: req.body.user,
+      question: req.body.question,
       body: req.body.body,
       timestamp: req.body.timestamp,
       upvotes: req.body.upvotes,
@@ -36,12 +36,12 @@ router.post("/", [auth, validateAnswer, checkUserBody], async (req, res) => {
     await answer.save();
 
     res.status(201).send({
-      message: "Answer created successfully",
+      message: "سوال با موفقیت ثبت شد",
       answer: answer,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Internal server error");
+    res.status(500).send("مشکلی پیش آمده است");
   }
 });
 

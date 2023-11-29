@@ -20,7 +20,7 @@ const questionsSchema = new mongoose.Schema({
   answers: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Answer",
+      ref: "Answers",
       default: null,
     },
   ],

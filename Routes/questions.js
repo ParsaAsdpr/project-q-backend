@@ -15,12 +15,21 @@ router.get("/", async (req, res) => {
 });
 router.get("/:id", async (req, res) => {
   try {
-    const question = await Question.findById(req.params.id);
+    const question = await Question.findById(req.params.id).populate({
+      path: "answers",
+      populate: {
+        path: "user",
+      },
+    });
+
     if (!question) return res.status(404).send("سوال مورد نظر پیدا نشد");
     res.send(question);
   } catch (error) {
+    if (error instanceof mongoose.CastError) {
+      return res.status(400).send("شناسه سوال نامعتبر است");
+    }
     console.error(error);
-    res.status(500).send("مشکلی پیش آمده است");
+    res.status(500).send("مشکلی پیش آمده است");
   }
 });
 

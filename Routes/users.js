@@ -18,9 +18,9 @@ router.get("/", [auth, isAdmin], async (req, res) => {
   if (users.length < 1) return res.status(404).send("کاربری یافت نشد");
   res.send(users);
 });
-router.get("/:id", async (req, res) => {
-  const user = await User.findById(req.params.id);
-  if (!user) return res.status(404).send("کاربری با این شناسه یافت نشد");
+router.get("/:username", async (req, res) => {
+  const user = await User.findOne({ username: req.params.username });
+  if (!user) return res.status(404).send("کاربری با این نام کاربری یافت نشد");
   res.send(_.pick(user, ["_id", "username", "profile"]));
 });
 

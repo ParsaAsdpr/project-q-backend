@@ -41,5 +41,5 @@ const answerSchema = new mongoose.Schema({
   },
 });
 
-exports.Answer = mongoose.model("Answers", answerSchema);
+exports.Answers = mongoose.model("Answers", answerSchema);
 exports.answersSchema = answerSchema;

@@ -25,7 +25,6 @@ router.post("/",[auth], async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(req.body.user)) return res.status(400).send("شناسه کاربر نامعتبر است");
     if (!mongoose.Types.ObjectId.isValid(req.body.question)) return res.status(400).send("شناسه سوال نامعتبر است");
 
-    // Check if the specified question exists
     const questionExists = await Question.exists({ _id: req.body.question });
     if (!questionExists) {
       return res.status(400).send("سوال مورد نظر وجود ندارد");
@@ -40,10 +39,8 @@ router.post("/",[auth], async (req, res) => {
       downvotes: req.body.downvotes,
     });
 
-    // Save the answer
     await answer.save();
 
-    // Update the corresponding question's answers array
     await Question.findByIdAndUpdate(
       req.body.question,
       { $push: { answers: answer._id } },

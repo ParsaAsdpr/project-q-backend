@@ -25,6 +25,8 @@ const userSchema = new mongoose.Schema({
     ],
   },
   accountCreated: { type: Date, default: Date.now },
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   isAdmin: { type: Boolean, default: false },
 });
 

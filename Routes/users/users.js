@@ -2,13 +2,13 @@ const express = require("express");
 const {
   validateUser,
   validateEditUser,
-} = require("../utils/Middleware/validations/validateUser");
-const { User } = require("../Models/usersModel");
+} = require("../../utils/Middleware/validations/validateUser");
+const { User } = require("../../Models/usersModel");
 const bcrypt = require("bcrypt");
-const auth = require("../utils/Middleware/auth");
-const isAdmin = require("../utils/Middleware/isAdmin");
+const auth = require("../../utils/Middleware/auth");
+const isAdmin = require("../../utils/Middleware/isAdmin");
 const _ = require("lodash");
-const checkUserParams = require("../utils/Middleware/checkUserParams");
+const checkUserParams = require("../../utils/Middleware/checkUserParams");
 
 const router = express.Router();
 

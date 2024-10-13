@@ -15,7 +15,7 @@ const port = process.env.PORT || 5000;
 
 mongoose.connect('mongodb://localhost/project-q').then(() => {
     console.log('Connected to MongoDB');
-}).catch((err) => {
+}).catch((err: any) => {
     console.log(err);
 });
 

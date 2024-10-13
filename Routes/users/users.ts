@@ -1,3 +1,5 @@
+import { Request, Response } from "express";
+
 const express = require("express");
 const {
   validateUser,
@@ -12,19 +14,19 @@ const checkUserParams = require("../../utils/Middleware/checkUserParams");
 
 const router = express.Router();
 
-router.get("/", [auth, isAdmin], async (req, res) => {
+router.get("/", [auth, isAdmin], async (req: Request, res: Response) => {
   const users = await User.find();
   if (!users) return res.status(404).send("کاربری یافت نشد");
   if (users.length < 1) return res.status(404).send("کاربری یافت نشد");
   res.send(users);
 });
-router.get("/:username", async (req, res) => {
+router.get("/:username", async (req: Request, res: Response) => {
   const user = await User.findOne({ username: req.params.username });
   if (!user) return res.status(404).send("کاربری با این نام کاربری یافت نشد");
   res.send(_.pick(user, ["_id", "username", "profile"]));
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req: Request, res: Response) => {
   const { error } = validateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -51,7 +53,7 @@ router.post("/", async (req, res) => {
     .send(_.pick(user, ["_id", "profile", "username", "email"]));
 });
 
-router.put("/:id", [auth, checkUserParams], async (req, res) => {
+router.put("/:id", [auth, checkUserParams], async (req: Request, res: Response) => {
   try {
     const { error } = validateEditUser(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -72,7 +74,7 @@ router.put("/:id", [auth, checkUserParams], async (req, res) => {
         website: req.body.profile.website || user.profile.website,
         social_links:
           req.body.profile.social_links || user.profile.social_links,
-      } || user.profile;
+      };
     user.password = req.body.password || user.password;
 
     if (req.body.password && req.body.password !== user.password) {

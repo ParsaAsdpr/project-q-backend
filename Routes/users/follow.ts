@@ -1,3 +1,5 @@
+import { Request, Response } from "express";
+
 const express = require("express");
 const { User } = require("../../Models/usersModel");
 const auth = require("../../utils/Middleware/auth");
@@ -5,7 +7,7 @@ const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
-router.post("/:username", auth, async (req, res) => {
+router.post("/:username", auth, async (req: Request, res: Response) => {
   const user = await User.findOne({ username: req.params.username });
   if (!user) return res.status(404).send("کاربری یافت نشد");
 

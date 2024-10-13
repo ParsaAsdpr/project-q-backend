@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
@@ -32,7 +32,13 @@ const userSchema = new mongoose.Schema({
 
 userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
-    { _id: this._id, profile: this.profile, email: this.email, username: this.username, isAdmin: this.isAdmin },
+    {
+      _id: this._id,
+      profile: this.profile,
+      email: this.email,
+      username: this.username,
+      isAdmin: this.isAdmin,
+    },
     "pvKey"
   );
   return token;

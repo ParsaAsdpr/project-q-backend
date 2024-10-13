@@ -1,3 +1,5 @@
+import { Request, Response } from "express";
+
 const express = require("express");
 const { Answers } = require("../Models/answersModel");
 const { default: mongoose } = require("mongoose");
@@ -8,19 +10,19 @@ const { Question } = require("../Models/questionsModel");
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", async (req: Request, res: Response) => {
   const answers = await Answers.find().populate("user", "username + profile").populate("question", "title");
   if (!answers) return res.status(404).send("جوابی پیدا نشد");
   if (answers.length < 1) return res.status(404).send("جوابی پیدا نشد");
   res.send(answers);
 });
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req: Request, res: Response) => {
   const answer = await Answers.findById(req.params.id).populate("user", "username + profile").populate("question", "title");
   if (!answer) return res.status(404).send("جواب مورد نظر پیدا نشد");
   res.send(answer);
 });
 
-router.post("/",[auth], async (req, res) => {
+router.post("/",[auth], async (req: Request, res: Response) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.body.user)) return res.status(400).send("شناسه کاربر نامعتبر است");
     if (!mongoose.Types.ObjectId.isValid(req.body.question)) return res.status(400).send("شناسه سوال نامعتبر است");

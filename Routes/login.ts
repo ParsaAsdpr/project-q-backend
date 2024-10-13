@@ -1,3 +1,5 @@
+import { Request, Response } from "express";
+
 const express = require("express");
 const { User } = require("../Models/usersModel");
 const validate = require("../utils/Middleware/validations/validateLogin");
@@ -7,7 +9,7 @@ const bcrypt = require("bcrypt");
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
+router.post("/", async (req: Request, res: Response) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
